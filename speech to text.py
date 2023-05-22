@@ -1,29 +1,17 @@
 import speech_recognition as sr
 import pyttsx3
+import tkinter as tk
+from PIL import Image, ImageTk
 
-listener = sr.Recognizer()
+recognizer = sr.Recognizer()
 engine = pyttsx3.init()
-voices = engine.getProperty('voices')
-engine.setProperty('voice', voices[1].id)
-
-def talk(text):
-    engine.say(text)
-    engine.runAndWait()
-
-def take_command():
-    try:
-        with sr.Microphone() as source:
-            talk("Hello Sanjivani, Speak Now")
-            print('listening...')
-            voice = listener.listen(source)
-            command = listener.recognize_google(voice)
-            command = command.lower()
-            print("Your Text :",command)
-    except:
-        pass
-    return command
-
-def run_assistant():
-    command = take_command()
-
-run_assistant()
+def speech_to_text():
+    with sr.Microphone() as source:
+        recognizer.adjust_for_ambient_noise(source)
+        audio = recognizer.listen(source)
+        try:
+            recognized_text = recognizer.recognize_google(audio)
+            output_text.delete("1.0", tk.END)
+            output_text.insert(tk.END, recognized_text)
+        except sr.UnknownValueError:
+            print("Unable to recognize speech")
